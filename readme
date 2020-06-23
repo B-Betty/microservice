@@ -1,0 +1,42 @@
+drop database if exists DB03;
+create database DB03 character set UTF8;
+use DB03;
+CREATE TABLE dept (
+	dept_no INT auto_increment NOT NULL,
+	dept_name varchar(100) NOT NULL,
+	db_source varchar(100) NOT null,
+	primary key(dept_no)
+);
+INSERT INTO dept(dept_name, db_source)  VALUES('计划部', DATABASE());
+INSERT INTO dept(dept_name, db_source)  VALUES('生产部', DATABASE());
+INSERT INTO dept(dept_name, db_source)  VALUES('研发部', DATABASE());
+
+
+
+1、eureka的注册与发现
+2、eureka集群 @@EnableEurekaClient  @@EnableEurekaServer
+3、ribbon负载均衡  @LoadBalance @@EnableEurekaClient
+    自定义ribbon @RibbonClient(name = "MICROSERVICECLOUD-DEPT", configuration = MySelfRule.class)
+                @Configuration @Bean IRule
+4、feign负载均衡：接口+注解，面向接口编程
+    @FeignClient(value = "MICROSERVICECLOUD-DEPT")
+    @EnableFeignClients(basePackages = "com.betty") //feign默认使用轮询算法
+5、Hystrix 断路器
+  5.1、服务熔断-- 服务端返回
+       @EnableCircuitBreaker //hystrix
+       @HystrixCommand(fallbackMethod = "processHystrix_Get")
+       @FeignClient(value = "MICROSERVICECLOUD-DEPT")
+  5.2、服务降级--客户端，与服务端无关
+       与feign （接口+注解的负载均衡）配合使用
+       @FeignClient(value = "MICROSERVICECLOUD-DEPT", fallbackFactory = DeptClientFallBackFactory.class)  //服务降级
+  5.3、HystrixDashboard 服务监控 （豪猪)
+
+        HystrixDashboard页面： http://localhost:9001/hystrix
+                    监控对象： http://localhost:8001/hystrix.stream
+                    查看：7色、1圈、1线
+6、zuul 网关
+    @EnableZuulProxy
+    不用代理 http://localhost:8001/dept/get/3
+    使用代理 http://myZuul.com:9527/microservicecloud-dept/dept/get/3
+7、spring cloud config配置管理
+

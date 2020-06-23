@@ -1,0 +1,4 @@
+com\betty\entity\Dept.class
+com\betty\service\DeptClientService.class
+com\betty\service\DeptClientFallBackFactory.class
+com\betty\service\DeptClientFallBackFactory$1.class
